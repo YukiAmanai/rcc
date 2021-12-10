@@ -1,15 +1,43 @@
+extern crate rcc;
+use rcc::strtol;
 use std::env;
 
 fn main() {
     let mut args = env::args();
-    if args.len() != 2  {
-        eprint!("引数の個数が正しくありません\n");
+    if args.len() != 2 {
+        eprint!("Usage: rcc <code>\n");
         return;
     }
-    println!(".intel_syntax noprefix\n");
-    println!(".globl main\n");
-    println!("main:\n");
-    println!("  mov rax, %d{}\n",args.nth(1).unwrap());
-    println!("  ret\n");
+
+    let p = args.nth(1).unwrap();
+
+    print!(".intel_syntax noprefix\n");
+    print!(".global main\n");
+    print!("main:\n");
+
+    let (n, mut p) = strtol(&p);
+    print!("  mov rax, {}\n", n.unwrap());
+
+    while let Some(c) = p.chars().nth(0) {
+        let s = p.split_off(1);
+        if c == '+' {
+            let (n, remaining) = strtol(&s);
+            p = remaining;
+            println!("  add rax, %ld{}\n", n.unwrap());
+            continue;
+        }
+
+        if c == '-' {
+            let (n, remaining) = strtol(&s);
+            p = remaining;
+            print!("  sub rax, {}\n", n.unwrap());
+            continue;
+        }
+
+        eprint!("unexpected character: {}\n", p);
+        return;
+    }
+
+    print!(" ret\n");
     return;
 }

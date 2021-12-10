@@ -1,11 +1,12 @@
-r9cc="./target/debug/r9cc"
+#!/bin/bash
+rcc="./target/debug/rcc"
 
 try() {
     expected="$1"
     input="$2"
 
-    ${r9cc} "$input" > tmp.s
-    gcc -static -o tmp tmp.s
+    cargo run -- "$input" > tmp.s
+    gcc -o tmp tmp.s
     ./tmp
     actual="$?"
 
