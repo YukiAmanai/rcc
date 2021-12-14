@@ -67,36 +67,37 @@ fn main() {
         eprint!("Usage: rcc <code>\n");
         return;
     }
-
-    let p = args.nth(1).unwrap();
+    
+    let tokens = tokenize(args.nth(1).unwrap());
 
     print!(".intel_syntax noprefix\n");
     print!(".global main\n");
     print!("main:\n");
 
-    let (n, mut p) = strtol(&p);
-    print!("  mov rax, {}\n", n.unwrap());
-
-    while let Some(c) = p.chars().nth(0) {
-        let s = p.split_off(1);
-        if c == '+' {
-            let (n, remaining) = strtol(&s);
-            p = remaining;
-            println!("  add rax, %ld{}\n", n.unwrap());
+    let mut i = 1;
+    while i != tokens.len() {
+        if tokens[i].ty == '+' as i32 {
+            i += 1;
+            if tokens[i].ty != TokenType::Num as i32 {
+                fail(&tokens, i);
+            }
+            print!("  add rax, {}\n", tokens[i].val);
+            i += 1;
             continue;
         }
 
-        if c == '-' {
-            let (n, remaining) = strtol(&s);
-            p = remaining;
-            print!("  sub rax, {}\n", n.unwrap());
+        if tokens[i].ty == '-' as i32 {
+            i += 1;
+            if tokens[i].ty != TokenType::Num as i32 {
+                fail(&tokens, i);
+            }
+            print!("  sub rax, {}\n", tokens[i].val);
+            i += 1;
             continue;
         }
 
-        eprint!("予期しない文字です:'' {}\n", p);
-        return;
+        fail(&tokens, i);
     }
 
-    print!(" ret\n");
-    return;
+    print!("  ret\n");
 }
