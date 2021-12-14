@@ -4,15 +4,17 @@ use std::env;
 use std::process::exit;
 
 enum TokenType {
-    Num,
+    Num, // Number literal
 }
 
+// Token type
 #[derive(Default, Debug)]
 struct Token {
-    ty: i32,
-    val: i32,
-    input: String,
+    ty: i32, // Token type
+    val: i32, // Number literal
+    input: String, // Token string (for error reporting)
 }
+
 fn tokenize(mut p: String) -> Vec<Token> {
     // Tokenized input is stored to this vec.
     let mut tokens: Vec<Token> = vec![];
@@ -32,7 +34,7 @@ fn tokenize(mut p: String) -> Vec<Token> {
                 input: org.clone(),
                 ..Default::default()
             };
-            p.split_off(1);
+            p = p.split_off(1); // p++
             tokens.push(token);
             continue;
         }
@@ -50,7 +52,7 @@ fn tokenize(mut p: String) -> Vec<Token> {
             continue;
         }
 
-        eprint!("トークナイズできません: {}\n", p);
+        eprint!("cannot tokenize: {}\n", p);
         exit(1);
     }
     return tokens;
