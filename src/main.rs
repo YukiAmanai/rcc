@@ -74,6 +74,11 @@ fn main() {
     print!(".global main\n");
     print!("main:\n");
 
+    if tokens[0].ty != TokenType::Num as i32 {
+        fail(&tokens, 0);
+    }
+    print!("  mov rax, {}\n", tokens[0].val);
+
     let mut i = 1;
     while i != tokens.len() {
         if tokens[i].ty == '+' as i32 {
