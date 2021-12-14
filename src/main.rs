@@ -34,7 +34,7 @@ fn tokenize(mut p: String) -> Vec<Token> {
                 input: org.clone(),
                 ..Default::default()
             };
-            p = p.split_off(1); // p++
+            p = p.split_off(1);
             tokens.push(token);
             continue;
         }
@@ -52,14 +52,14 @@ fn tokenize(mut p: String) -> Vec<Token> {
             continue;
         }
 
-        eprint!("cannot tokenize: {}\n", p);
+        eprint!("トークナイズできません: {}\n", p);
         exit(1);
     }
     return tokens;
 }
 
 fn fail(tokens: &Vec<Token>, i: usize) {
-    eprint!("unexpected character: {:?}\n", tokens[i]);
+    eprint!("数ではありません: {:?}\n", tokens[i]);
     exit(1);
 }
 
