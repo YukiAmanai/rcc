@@ -41,7 +41,7 @@ fn tokenize(mut p: String) -> Vec<Token> {
 
         // Number
         if c.is_ascii_digit() {
-            let (n, mut remaining) = strtol(&p);
+            let (n,  remaining) = strtol(&p);
             p = remaining;
             let token = Token {
                 ty: TokenType::Num as i32,
