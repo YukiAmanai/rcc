@@ -77,12 +77,7 @@ fn main() {
     print!("main:\n");
 
     if tokens[0].ty != TokenType::Num as i32 {
-        {
-            let tokens = &tokens;
-            let i = 0;
-            eprint!("数ではありません: {:?}\n", tokens[i]);
-            exit(1);
-        };
+        fail(&tokens, 0);
     }
     print!("  mov rax, {}\n", tokens[0].val);
 
