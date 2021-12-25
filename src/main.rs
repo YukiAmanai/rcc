@@ -1,7 +1,6 @@
 extern crate rcc;
 use rcc::strtol;
 use std::env;
-use std::process::exit;
 
 enum TokenType {
     Num, // Number literal
@@ -53,14 +52,14 @@ fn tokenize(mut p: String) -> Vec<Token> {
         }
 
         eprint!("トークナイズできません: {}\n", p);
-        exit(1);
+        panic!("");
     }
     return tokens;
 }
 
 fn fail(tokens: &Vec<Token>, i: usize) {
     eprint!("数ではありません: {:?}\n", tokens[i]);
-    exit(1);
+    panic!("");
 }
 
 fn main() {

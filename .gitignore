@@ -4,3 +4,7 @@
 *~
 *.o
 tmp*
+
+# This is practice file so there sre ignore.
+index.rs
+index
