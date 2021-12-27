@@ -66,12 +66,12 @@ enum NodeType {
     Num,
 }
 
-#[derive(Default, Debug)]
+#[derive(Debug)]
 struct Node {
     ty: i32, // Token type
     lhs: Option<Box<Node>>, //左辺
-    rhs: Option<Box<Node>>, //左辺
-    val: i32, // Number literal
+    rhs: Option<Box<Node>>, //右辺
+    val: Option<i32>, // Number literal
 }
 impl Node {
     fn new(op: i32, lhs: Box<Node>, rhs: Box<Node>,) -> Self {
@@ -79,17 +79,20 @@ impl Node {
             ty: op,
             lhs: Some(lhs),
             rhs: Some(rhs),
-            ..Default::default()
+            val: None,
         }
     }
 
     fn new_code_num(val: i32) -> Self {
         Self {
-            ty: TokenType::Num as i32,
-            val: val,
-            ..Default::default()
+            ty: NodeType::Num as i32,
+            val: Some(val),
+            lhs: None,
+            rhs: None,
+
         }
     }
+
 }
 
 
