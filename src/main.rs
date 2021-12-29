@@ -1,9 +1,8 @@
 extern crate rcc;
 use rcc::strtol;
-use std::{env, default};
-
+use std::env;
 enum TokenType {
-    Num, // Number literal
+    Num,
 }
 
 // Token type
@@ -66,37 +65,31 @@ enum NodeType {
     Num,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 struct Node {
     ty: i32, // Token type
     lhs: Option<Box<Node>>, //左辺
     rhs: Option<Box<Node>>, //右辺
-    val: Option<i32>, // Number literal
+    val: i32, // Number literal
 }
 impl Node {
-    fn new(op: i32, lhs: Box<Node>, rhs: Box<Node>,) -> Self {
+    fn new(lhs: Box<Node>, rhs: Box<Node>,) -> Self {
         Self {
-            ty: op,
+            ty: NodeType::Num as i32,
             lhs: Some(lhs),
             rhs: Some(rhs),
-            val: None,
+            ..Default::default()
         }
     }
 
     fn new_code_num(val: i32) -> Self {
         Self {
             ty: NodeType::Num as i32,
-            val: Some(val),
-            lhs: None,
-            rhs: None,
-
+            val: val,
+            ..Default::default()
         }
     }
-
 }
-
-
-
 
 fn main() {
     let mut args = env::args();
