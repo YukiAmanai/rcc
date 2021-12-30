@@ -1,4 +1,4 @@
-pub fn strtol(s: &String) -> (Option<i64>, String) {
+pub fn strtol(s: &String) -> (Option<i32>, String) {
     if s.is_empty() {
         return (None, s.clone());
     }
@@ -15,9 +15,9 @@ pub fn strtol(s: &String) -> (Option<i64>, String) {
     }
 
     if len == pos {
-        (Some(remaining.parse::<i64>().unwrap()), "".into())
+        (Some(remaining.parse::<i32>().unwrap()), "".into())
     } else {
         let t: String = remaining.drain(..pos).collect();
-        (Some(t.parse::<i64>().unwrap()), remaining)
+        (Some(t.parse::<i32>().unwrap()), remaining)
     }
 }
