@@ -2,13 +2,11 @@ extern crate rcc;
 use rcc::strtol;
 use std::env;
 
-#[derive(Debug)]
 enum TokenType {
     Num,
 }
 
-// Token type
-#[derive(Default,Debug,Clone)]
+#[derive(Default, Debug, Clone)]
 struct Token {
     ty: i32, // Token type
     val: i32, // Number literal
@@ -64,15 +62,11 @@ fn fail(tokens: &Vec<Token>, i: usize) {
     eprint!("数ではありません: {:?}\n", tokens[i]);
     panic!("");
 }
-
-#[derive(Debug)]
-#[allow(unused)]
 enum NodeType {
     Num,
 }
 
 #[derive(Default,Clone)]
-
 struct Node {
     ty: i32, // Token type
     lhs: Option<Box<Node>>, //左辺
@@ -100,6 +94,7 @@ impl Node {
             ..Default::default()
         }
     }
+    // 関数を使用済みとしてマークをするためにマクロ実装する
     #[allow(dead_code)]
     fn expr(tokens: Vec<Token>) -> (Self, Vec<Token>) {
         let (mut node, tokens) = Self::mul(tokens);
