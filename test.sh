@@ -1,6 +1,6 @@
 #!/bin/bash
-rcc="./target/debug/rcc"
 
+rcc="./target/debug/rcc"
 try() {
     expected="$1"
     input="$2"

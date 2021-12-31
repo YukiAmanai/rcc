@@ -1,6 +1,6 @@
 .intel_syntax noprefix
 .global main
 main:
-  mov rax, 12
+  mov rax, 1
   add rax, 2
-  sub rax, 1
+数ではありません

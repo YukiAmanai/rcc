@@ -2,52 +2,10 @@ extern crate rcc;
 use rcc::strtol;
 use std::env;
 
-
 #[derive(Default, Debug, Clone)]
 struct Token {
     val: Option<i32>, // Number literal
     op: Option<char>
-}
-
-fn tokenize(mut p: String) -> Vec<Token> {
-    // Tokenized input is stored to this vec.
-    let mut tokens: Vec<Token> = vec![];
-
-    while let Some(c) = p.chars().nth(0) {
-        // 空白を読み飛ばす
-        if c.is_whitespace() {
-            p = p.split_off(1); // p++
-            continue;
-        }
-
-        // + or -
-        if c == '+' || c == '-' {
-            let token = Token {
-                op: Some(c),
-                ..Default::default()
-            };
-            p = p.split_off(1);
-            tokens.push(token);
-            continue;
-        }
-
-        // Number
-        if c.is_ascii_digit() {
-            let (n,  remaining) = strtol(&p);
-            p = remaining;
-            let token = Token {
-                val: n,
-                op: None,
-                ..Default::default()
-            };
-            tokens.push(token);
-            continue;
-        }
-
-        eprint!("トークナイズできません: {}\n", p);
-        panic!("");
-    }
-    return tokens;
 }
 
 #[derive(Default,Clone)]
@@ -57,6 +15,7 @@ struct Node {
     val: Option<i32>,
     operator: Option<char>,
 }
+
 impl Node {
     // 左辺と右辺を受け取る2項演算子の関数を定義する
     fn new(op: char, lhs: Box<Node>, rhs: Box<Node>,) -> Self {
@@ -75,7 +34,7 @@ impl Node {
             ..Default::default()
         }
     }
-    
+
     #[allow(dead_code)]
     fn expr(tokens: Vec<Token>) -> (Self, Vec<Token>) {
         let (mut node, tokens) = Self::mul(tokens);
@@ -104,7 +63,7 @@ impl Node {
                     node = Self::new('*', Box::new(node), Box::new(rhs));
                 }
                 Some('/') => {
-                    let (rhs, _tokens) = Self::primary(tokens[1..].to_vec());
+                    let (rhs, _tokens) = Self::primary( tokens[1..].to_vec());
                     node = Self::new('/', Box::new(node), Box::new(rhs));
                 }
                 _ => (),
@@ -126,13 +85,54 @@ impl Node {
     }
 }
 
+// トークナイザー実装する
+fn tokenize(mut p: String) -> Vec<Token> {
+    // Tokenized input is stored to this vec.
+    let mut tokens: Vec<Token> = vec![];
+
+    while let Some(c) = p.chars().nth(0) {
+        // 空白を読み飛ばす
+        if c.is_whitespace() {
+            p = p.split_off(1); // p++
+            continue;
+        }
+
+        // + or -　or * or /
+        if c == '+' || c == '-' || c == '*' || c == '/' || c == '(' || c == ')'{
+            let token = Token {
+                op: Some(c),
+                ..Default::default()
+            };
+            p = p.split_off(1);
+            tokens.push(token);
+            continue;
+        }
+
+        // Number
+        if c.is_ascii_digit() {
+            let (n,  remaining) = strtol(&p);
+            p = remaining;
+            let token = Token {
+                val: n,
+                op: None,
+                ..Default::default()
+            };
+            tokens.push(token);
+            continue;
+        }
+
+        eprint!("トークナイズできません: {}\n", p);
+        panic!("");
+    }
+    return tokens;
+}
+
 fn main() {
     let mut args = env::args();
     if args.len() != 2 {
         eprint!("Usage: rcc <code>\n");
         return;
     }
-    
     let tokens = tokenize(args.nth(1).unwrap());
 
     print!(".intel_syntax noprefix\n");
