@@ -4,8 +4,8 @@ use std::env;
 
 #[derive(Default, Debug, Clone)]
 struct Token {
-    val: Option<i32>, // Number literal
-    op: Option<char>
+    val: Option<i32>, // Number
+    op: Option<char> // character
 }
 
 #[derive(Default,Clone)]
