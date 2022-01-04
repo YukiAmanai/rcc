@@ -8,7 +8,7 @@ struct Token {
     op: Option<char> // character
 }
 
-#[derive(Default,Clone)]
+#[derive(Default, Clone, Debug)]
 struct Node {
     lhs: Option<Box<Node>>, //左辺
     rhs: Option<Box<Node>>, //右辺
@@ -35,7 +35,6 @@ impl Node {
         }
     }
 
-    #[allow(dead_code)]
     fn expr(tokens: Vec<Token>) -> (Self, Vec<Token>) {
         let (mut node, tokens) = Self::mul(tokens);
         for token in &tokens {
@@ -127,39 +126,60 @@ fn tokenize(mut p: String) -> Vec<Token> {
     return tokens;
 }
 
+#[allow(dead_code)]
+fn gen(node: &Node) {
+    if let Some(val) = &node.val {
+        print!("  push {}", val);
+    }
+
+    if let Some(rhs) = &node.rhs {
+        gen(&rhs);
+    }
+
+    if let Some(lhs) = &node.lhs {
+        gen(&lhs);
+    }
+    println!("  pop rdi");
+    println!("  pop rax");
+
+    match &node.operator {
+        Some('+') => {
+            print!("  add rax, rdi");
+        }
+        Some('-') => {
+            print!("  sub rax, rdi");
+        }
+        Some('*') => {
+            print!(" imul rax, rdi");
+        }
+        Some('/') => {
+            print!("  cqo");
+            print!("  idiv rdi");
+        }
+        _ => {
+            print!("  push rax");
+        }
+    }
+}
+
 fn main() {
     let mut args = env::args();
     if args.len() != 2 {
-        eprint!("Usage: rcc <code>\n");
+        eprint!("引数の個数が正しくありません");
         return;
     }
-    let tokens = tokenize(args.nth(1).unwrap());
 
-    print!(".intel_syntax noprefix\n");
-    print!(".global main\n");
-    print!("main:\n");
+    // トークナイズしてパースする
+    let user_input = args.nth(1);
+    let tokens = tokenize(user_input.unwrap());
+    let expr = Node::expr(tokens);
+    println!("{:#?}", expr);
 
-    for (index, token) in (0_usize..).zip(tokens.iter()) {
-        let index_number = 0;
-        if index == index_number {
-            println!("  mov rax, {}", token.val.unwrap());
-            continue;
-        }
-        if let Some(val) = token.val {
-            match tokens[index - 1].op {
-                Some('+') => {
-                    println!("  add rax, {}", val);
-                }
-                Some('-') => {
-                    println!("  sub rax, {}", val);
-                }
-                Some(_) | None => {
-                    println!("数ではありません");
-                }
-            }
-        }
-        if token.val == None && token.op == None {
-            println!("  ret");
-        }
-    }
+    // アセンブリの前半部分を出力
+    println!(".intel_syntax noprefix");
+    println!(".global main");
+    println!("main:");
+
+    print!("  pop rax");
+    print!("  ret");
 }
