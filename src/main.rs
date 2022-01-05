@@ -36,9 +36,9 @@ impl Node {
     }
     fn expr(tokens: &mut Vec<Token>) -> Self {
         let mut node = Self::mul(tokens);
-
-            if tokens.len() == 0 {
-            }
+        while tokens.len() == 0  {
+            break;
+        }
             let token = &tokens[1];
             match token.op {
                 Some('+') => {
@@ -51,14 +51,16 @@ impl Node {
                 }
                 _ => {
                 }
-            }
-        
+        }
         return node;
     }
 
     fn mul(tokens: &mut Vec<Token>) -> Self {
         let mut node = Self::primary(tokens);
 
+        while tokens.len() == 0  {
+            break;
+        }
             let token = &tokens[1];
             match token.op {
                 Some('*') => {
@@ -71,7 +73,7 @@ impl Node {
                 }
                 _ => {
                 }
-        }
+    }
         return node;
     }
 
