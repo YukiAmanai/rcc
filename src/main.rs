@@ -1,7 +1,6 @@
 extern crate rcc;
 use rcc::strtol;
 use std::env;
-use std::process::exit;
 
 #[derive(Default, Debug, Clone)]
 struct Token {
@@ -128,7 +127,7 @@ fn tokenize(mut p: String) -> Vec<Token> {
         }
 
         eprint!("トークナイズできません: {}", p);
-        exit(1);
+        panic!("");
     }
 
     return tokens;
