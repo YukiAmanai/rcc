@@ -131,11 +131,6 @@ fn tokenize(mut p: String) -> Vec<Token> {
         exit(1);
     }
 
-    tokens.push(Token {
-        val: None,
-        op: None,
-    });
-
     return tokens;
 }
 
