@@ -1,6 +1,7 @@
 extern crate rcc;
 use rcc::strtol;
 use std::env;
+use std::process::exit;
 
 #[derive(Default, Debug, Clone)]
 struct Token {
@@ -18,10 +19,10 @@ struct Node {
 
 impl Node {
     // 左辺と右辺を受け取る2項演算子の関数を定義する
-    fn new(op: char, lhs: Box<Node>, rhs: Box<Node>,) -> Self {
+    fn new(op: char, lhs: Node, rhs: Node,) -> Self {
         Self {
-            lhs: Some(lhs),
-            rhs: Some(rhs),
+            lhs: Some(Box::new(lhs)),
+            rhs: Some(Box::new(rhs)),
             operator: Some(op),
             ..Default::default()
         }
@@ -34,56 +35,62 @@ impl Node {
             ..Default::default()
         }
     }
+    fn expr(tokens: &mut Vec<Token>) -> Self {
+        let mut node = Self::mul(tokens);
 
-    fn expr(tokens: Vec<Token>) -> (Self, Vec<Token>) {
-        let (mut node, tokens) = Self::mul(tokens);
-        for token in &tokens {
+            if tokens.len() == 0 {
+            }
+            let token = &tokens[1];
             match token.op {
                 Some('+') => {
-                    let (rhs, _tokens) = Self::mul(tokens[1..].to_vec());
-                    node = Self::new('+', Box::new(node), Box::new(rhs));
+                    let rhs = Self::mul(tokens);
+                    node = Node::new('+', node, rhs);
                 }
                 Some('-') => {
-                    let (rhs, _tokens) = Self::mul(tokens[1..].to_vec());
-                    node = Self::new('-',Box::new(node), Box::new(rhs));
+                    let rhs = Self::mul(tokens);
+                    node = Node::new('-', node, rhs);
                 }
-                _ => (),
+                _ => {
+                }
             }
-        }
-        return (node, tokens);
+        
+        return node;
     }
 
-    fn mul(tokens: Vec<Token>) -> (Self, Vec<Token>) {
-        let (mut node, tokens) = Self::primary(tokens);
-        for token in &tokens {
+    fn mul(tokens: &mut Vec<Token>) -> Self {
+        let mut node = Self::primary(tokens);
+
+            let token = &tokens[1];
             match token.op {
                 Some('*') => {
-                    let (rhs, _tokens) = Self::primary(tokens[1..].to_vec());
-                    node = Self::new('*', Box::new(node), Box::new(rhs));
+                    let rhs = Self::primary(tokens);
+                    node = Node::new('*', node, rhs);
                 }
                 Some('/') => {
-                    let (rhs, _tokens) = Self::primary( tokens[1..].to_vec());
-                    node = Self::new('/', Box::new(node), Box::new(rhs));
+                    let rhs = Self::primary(tokens);
+                    node = Node::new('/', node, rhs);
                 }
-                _ => (),
-            }
+                _ => {
+                }
         }
-        return (node, tokens);
+        return node;
     }
 
-    fn primary(tokens: Vec<Token>) -> (Self, Vec<Token>) {
+    fn primary(tokens: &mut Vec<Token>) -> Self {
         if tokens[0].op == Some('(') {
             let close_index = tokens
                 .iter()
                 .position(|token| token.op == Some(')'))
                 .unwrap();
-            return Self::expr(tokens[1..(close_index - 1)].to_vec());
+            let mut exp = tokens[1..close_index].to_vec();
+            tokens.drain(0..(close_index + 1));
+            return Self::expr(&mut exp);
         } else {
-            return (Self::new_code_num(tokens[0].val.unwrap()), tokens[1..].to_vec());
+            let num = tokens[0].val.unwrap();
+            return Self::new_code_num(num);
         };
     }
 }
-
 // トークナイザー実装する
 fn tokenize(mut p: String) -> Vec<Token> {
     // Tokenized input is stored to this vec.
@@ -120,15 +127,20 @@ fn tokenize(mut p: String) -> Vec<Token> {
             continue;
         }
 
-        eprint!("トークナイズできません: {}\n", p);
-        panic!("");
+        eprint!("トークナイズできません: {}", p);
+        exit(1);
     }
+
+    tokens.push(Token {
+        val: None,
+        op: None,
+    });
+
     return tokens;
 }
 
-#[allow(dead_code)]
 fn gen(node: &Node) {
-    if let Some(val) = &node.val {
+    if let Some(val) = node.val {
         print!("  push {}", val);
     }
 
@@ -171,14 +183,15 @@ fn main() {
 
     // トークナイズしてパースする
     let user_input = args.nth(1);
-    let tokens = tokenize(user_input.unwrap());
-    let expr = Node::expr(tokens);
-    println!("{:#?}", expr);
+    let mut tokens = tokenize(user_input.unwrap());
+    let expr = Node::expr(&mut tokens);
+    // println!("{:#?}", expr);
 
     // アセンブリの前半部分を出力
     println!(".intel_syntax noprefix");
     println!(".global main");
     println!("main:");
+    gen(&expr);
 
     print!("  pop rax");
     print!("  ret");

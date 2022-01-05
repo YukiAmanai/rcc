@@ -20,7 +20,6 @@ if [ "$actual" = "$expected" ]; then
 
 try 0 0
 try 42 42
-try 41 ' 12 + 34 -5 '
 try 90 '(12 + 3) * 6'
 try 8 '4 + 8 / 2'
 try 47 '5+6*7'
