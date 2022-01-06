@@ -34,6 +34,7 @@ impl Node {
             ..Default::default()
         }
     }
+    
     fn expr(tokens: &mut Vec<Token>) -> Self {
         let mut node = Self::mul(tokens);
         while tokens.len() == 0  {
@@ -100,7 +101,7 @@ fn tokenize(mut p: String) -> Vec<Token> {
     while let Some(c) = p.chars().nth(0) {
         // 空白を読み飛ばす
         if c.is_whitespace() {
-            p = p.split_off(1); // p++
+            p = p.split_off(1);
             continue;
         }
 
@@ -129,7 +130,7 @@ fn tokenize(mut p: String) -> Vec<Token> {
         }
 
         eprint!("トークナイズできません: {}", p);
-        panic!("");
+        panic!("crash and burn");
     }
 
     return tokens;
@@ -181,7 +182,6 @@ fn main() {
     let user_input = args.nth(1);
     let mut tokens = tokenize(user_input.unwrap());
     let expr = Node::expr(&mut tokens);
-    // println!("{:#?}", expr);
 
     // アセンブリの前半部分を出力
     println!(".intel_syntax noprefix");
