@@ -1,9 +1,3 @@
-test: 
-	cargo test
-	./test.sh
-
-clean:
-	rm -f *~ tmp*
 [tasks.image]
 script = ["docker build -t compilerbook https://www.sigbus.info/compilerbook/Dockerfile"]
 
