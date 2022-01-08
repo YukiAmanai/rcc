@@ -44,11 +44,11 @@ impl Node {
             match token.op {
                 Some('+') => {
                     let rhs = Self::mul(tokens);
-                    node = Node::new('+', node, rhs);
+                    node = Self::new('+', node, rhs);
                 }
                 Some('-') => {
                     let rhs = Self::mul(tokens);
-                    node = Node::new('-', node, rhs);
+                    node = Self::new('-', node, rhs);
                 }
                 _ => {
                 }
@@ -66,11 +66,11 @@ impl Node {
             match token.op {
                 Some('*') => {
                     let rhs = Self::primary(tokens);
-                    node = Node::new('*', node, rhs);
+                    node = Self::new('*', node, rhs);
                 }
                 Some('/') => {
                     let rhs = Self::primary(tokens);
-                    node = Node::new('/', node, rhs);
+                    node = Self::new('/', node, rhs);
                 }
                 _ => {
                 }
