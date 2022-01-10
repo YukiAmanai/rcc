@@ -1,10 +1,10 @@
 .intel_syntax noprefix
 .global main
 main:
-  push 5  pop rdi
+  push 20  pop rdi
   pop rax
-  push rax  push 5  pop rdi
+  push rax  push 20  pop rdi
   pop rax
   push rax  pop rdi
   pop rax
- imul rax, rdi  pop rax  ret
+  add rax, rdi  pop rax  ret

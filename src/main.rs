@@ -65,11 +65,11 @@ impl Node {
             let token = &tokens[1];
             match token.op {
                 Some('*') => {
-                    let rhs = Self::primary(tokens);
+                    let rhs = Self::unary(tokens);
                     node = Self::new('*', node, rhs);
                 }
                 Some('/') => {
-                    let rhs = Self::primary(tokens);
+                    let rhs = Self::unary(tokens);
                     node = Self::new('/', node, rhs);
                 }
                 _ => {
@@ -91,6 +91,25 @@ impl Node {
             let num = tokens[0].val.unwrap();
             return Self::new_code_num(num);
         };
+    }
+
+    fn unary(tokens: &mut Vec<Token>) -> Self {
+        let token = &tokens[0];
+        
+        while tokens.len() == 0  {
+            break;
+        }
+        match token.op {
+            Some('+') => {
+                return Self::primary(tokens);
+            }
+            Some('-') => {
+                return Self::new('-',Self::new_code_num(0), Self::primary(tokens));
+            }
+            _ => {
+            }
+        }
+        return Self::primary(tokens);
     }
 }
 // トークナイザー実装する
