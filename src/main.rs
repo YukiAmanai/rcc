@@ -5,7 +5,8 @@ use std::env;
 #[derive(Default, Debug, Clone)]
 struct Token {
     val: Option<i32>, // Number
-    op: Option<char> // character
+    op: Option<String>, // character
+    len: Option<String>  // length
 }
 
 #[derive(Default, Clone, Debug)]
@@ -13,12 +14,12 @@ struct Node {
     lhs: Option<Box<Node>>, //左辺
     rhs: Option<Box<Node>>, //右辺
     val: Option<i32>,
-    operator: Option<char>,
+    operator: Option<String>,
 }
 
 impl Node {
     // 左辺と右辺を受け取る2項演算子の関数を定義する
-    fn new(op: char, lhs: Node, rhs: Node,) -> Self {
+    fn new(op: String, lhs: Node, rhs: Node,) -> Self {
         Self {
             lhs: Some(Box::new(lhs)),
             rhs: Some(Box::new(rhs)),
@@ -41,17 +42,21 @@ impl Node {
             break;
         }
             let token = &tokens[1];
-            match token.op {
-                Some('+') => {
-                    let rhs = Self::mul(tokens);
-                    node = Self::new('+', node, rhs);
-                }
-                Some('-') => {
-                    let rhs = Self::mul(tokens);
-                    node = Self::new('-', node, rhs);
-                }
-                _ => {
-                }
+            match &token.op {
+                Some(op) => match op.as_ref() {
+                    "+" => {
+                        let rhs = Self::mul(tokens);
+                        node = Self::new("+".to_string(), node, rhs);
+                    }
+                    "-" => {
+                        let rhs = Self::mul(tokens);
+                        node = Self::new("-".to_string(), node, rhs);
+                    }
+                    err => {
+                        panic!("unknow Token type: {}", err);
+                    }
+                },
+                _ => ()
         }
         return node;
     }
@@ -63,33 +68,23 @@ impl Node {
             break;
         }
             let token = &tokens[1];
-            match token.op {
-                Some('*') => {
-                    let rhs = Self::unary(tokens);
-                    node = Self::new('*', node, rhs);
-                }
-                Some('/') => {
-                    let rhs = Self::unary(tokens);
-                    node = Self::new('/', node, rhs);
-                }
-                _ => (),
+            match &token.op {
+                Some(op) => match op.as_ref() {
+                    "*" => {
+                        let rhs = Self::unary(tokens);
+                        node = Self::new("*".to_string(), node, rhs);
+                    }
+                    "/" => {
+                        let rhs = Self::unary(tokens);
+                        node = Self::new("/".to_string(), node, rhs);
+                    }
+                    err => {
+                        panic!("unknow Token type: {}", err);
+                    }
+                },
+                _ => ()
     }
         return node;
-    }
-
-    fn primary(tokens: &mut Vec<Token>) -> Self {
-        if tokens[0].op == Some('(') {
-            let close_index = tokens
-                .iter()
-                .position(|token| token.op == Some(')'))
-                .unwrap();
-            let mut exp = tokens[1..close_index].to_vec();
-            tokens.drain(0..(close_index + 1));
-            return Self::expr(&mut exp);
-        } else {
-            let num = tokens[0].val.unwrap();
-            return Self::new_code_num(num);
-        };
     }
 
     fn unary(tokens: &mut Vec<Token>) -> Self {
@@ -98,18 +93,52 @@ impl Node {
         while tokens.len() == 0  {
             break;
         }
-        match token.op {
-            Some('+') => return Self::primary(tokens),
-            Some('-') => return Self::new('-',Self::new_code_num(0), Self::primary(tokens)),
+        match &token.op {
+            Some(op) => match op.as_ref() {
+                "+" => {
+                    return Self::primary(tokens);
+                }
+                "-" => {
+                    return Self::new("-".to_string(),Self::new_code_num(0), Self::primary(tokens));
+                }
+                err => {
+                    panic!("unknow Token type: {}", err);
+                }
+            },
             _ => (),
         }
         return Self::primary(tokens);
+    }
+
+    fn primary(tokens: &mut Vec<Token>) -> Self {
+        match &tokens[0].op {
+            Some(op) => match op.as_str() {
+                "(" => {
+                    let close_index = tokens
+                        .iter()
+                        .position(|token| token.op == Some(")".to_string()))
+                        .unwrap();
+                    let mut exp = tokens[1..close_index].to_vec();
+                    tokens.drain(0..(close_index + 1));
+                    return Node::expr(&mut exp);
+                }
+                _ => {
+                    let num = tokens[0].val.unwrap();
+                    return Node::new_code_num(num);
+                }
+            }
+            _ => {
+                let num = tokens[0].val.unwrap();
+                return Node::new_code_num(num);
+            }
+        }
     }
 }
 // トークナイザー実装する
 fn tokenize(mut p: String) -> Vec<Token> {
     // Tokenized input is stored to this vec.
     let mut tokens: Vec<Token> = vec![];
+    let mut current_token = String::from("");
 
     while let Some(c) = p.chars().nth(0) {
         // 空白を読み飛ばす
@@ -118,10 +147,20 @@ fn tokenize(mut p: String) -> Vec<Token> {
             continue;
         }
 
+        if c == '=' && current_token.len() > 0 {
+            let token = Token {
+                op: Some(c.to_string()),
+                len: Some(current_token.clone()),
+                ..Default::default()
+            };
+            current_token = String::from("");
+            tokens.push(token);
+            continue;
+        }
         // + or -　or * or /
         if c == '+' || c == '-' || c == '*' || c == '/' || c == '(' || c == ')'{
             let token = Token {
-                op: Some(c),
+                op: Some(c.to_string()),
                 ..Default::default()
             };
             p = p.split_off(1);
@@ -165,15 +204,22 @@ fn gen(node: &Node) {
     println!("  pop rax");
 
     match &node.operator {
-        Some('+') => print!("  add rax, rdi"),
-        Some('-') => print!("  sub rax, rdi"),
-        Some('*') => print!(" imul rax, rdi"),
-        Some('/') => {
-            print!("  cqo");
-            print!("  idiv rdi");
+        Some(op) => {
+            match op.as_ref() {
+                "+" => println!("  add rax, rdi"),
+                "-" => println!("  sub rax, rdi"),
+                "*" => println!("  imul rax, rdi"),
+                "/" => {
+                    println!("  cqo");
+                    println!("  idiv rdi");
+                }
+                _ => (),
+            }
         }
-        _ => print!("  push rax")
+        _ => {
+        }
     }
+    println!("  push rax");
 }
 
 fn main() {
