@@ -72,8 +72,7 @@ impl Node {
                     let rhs = Self::unary(tokens);
                     node = Self::new('/', node, rhs);
                 }
-                _ => {
-                }
+                _ => (),
     }
         return node;
     }
@@ -100,14 +99,9 @@ impl Node {
             break;
         }
         match token.op {
-            Some('+') => {
-                return Self::primary(tokens);
-            }
-            Some('-') => {
-                return Self::new('-',Self::new_code_num(0), Self::primary(tokens));
-            }
-            _ => {
-            }
+            Some('+') => return Self::primary(tokens),
+            Some('-') => return Self::new('-',Self::new_code_num(0), Self::primary(tokens)),
+            _ => (),
         }
         return Self::primary(tokens);
     }
@@ -171,22 +165,14 @@ fn gen(node: &Node) {
     println!("  pop rax");
 
     match &node.operator {
-        Some('+') => {
-            print!("  add rax, rdi");
-        }
-        Some('-') => {
-            print!("  sub rax, rdi");
-        }
-        Some('*') => {
-            print!(" imul rax, rdi");
-        }
+        Some('+') => print!("  add rax, rdi"),
+        Some('-') => print!("  sub rax, rdi"),
+        Some('*') => print!(" imul rax, rdi"),
         Some('/') => {
             print!("  cqo");
             print!("  idiv rdi");
         }
-        _ => {
-            print!("  push rax");
-        }
+        _ => print!("  push rax")
     }
 }
 
