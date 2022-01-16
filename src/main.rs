@@ -4,7 +4,7 @@ use std::env;
 
 #[derive(Default, Debug, Clone)]
 struct Token {
-    val: Option<i32>, // Number
+    val: Option<i64>, // Number
     op: Option<String>, // character
     len: Option<String>  // length
 }
@@ -13,7 +13,7 @@ struct Token {
 struct Node {
     lhs: Option<Box<Node>>, //左辺
     rhs: Option<Box<Node>>, //右辺
-    val: Option<i32>,
+    val: Option<i64>,
     operator: Option<String>,
 }
 
@@ -29,7 +29,7 @@ impl Node {
     }
 
     // 数値を受け取れる関数を定義する
-    fn new_code_num(val: i32) -> Self {
+    fn new_code_num(val: i64) -> Self {
         Self {
             val: Some(val),
             ..Default::default()
@@ -184,6 +184,10 @@ fn tokenize(mut p: String) -> Vec<Token> {
         eprint!("トークナイズできません: {}", p);
         panic!("crash and burn");
     }
+
+    tokens.push(Token {
+        ..Default::default()
+    });
 
     return tokens;
 }
