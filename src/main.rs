@@ -132,13 +132,13 @@ impl Node {
                     return Node::expr(&mut exp);
                 }
                 _ => {
-                    let num = tokens[0].val.unwrap_or_default();
+                    let num = tokens[0].val.unwrap();
                     tokens.remove(0);
                     return Node::new_code_num(num);
                 }
             }
             _ => {
-                let num = tokens[0].val.unwrap_or_default();
+                let num = tokens[0].val.unwrap();
                 tokens.remove(0);
                 return Node::new_code_num(num);
             }
@@ -151,7 +151,7 @@ impl Token {
     fn tokenize(mut p: String) -> Vec<Token> {
         // Tokenized input is stored to this vec.
         let mut tokens: Vec<Token> = vec![];
-        let mut current_token = String::from("");
+        let current_token = String::from("");
     
         while let Some(c) = p.chars().nth(0) {
             // 空白を読み飛ばす
@@ -166,7 +166,6 @@ impl Token {
                     len: Some(current_token.clone()),
                     ..Default::default()
                 };
-                current_token = String::from("");
                 tokens.push(token);
                 continue;
             }
@@ -207,6 +206,7 @@ impl Token {
     }
 }
 
+#[allow(dead_code)]
 fn gen(node: &Node) {
     if let Some(val) = node.val {
         print!("  push {}", val);
@@ -265,6 +265,7 @@ fn main() {
     println!(".global main");
     println!("main:");
     gen(&expr);
+    // println!("{:#?}", expr);
 
     print!("  pop rax");
     print!("  ret");
