@@ -38,6 +38,78 @@ impl Node {
     }
 
     fn expr(tokens: &mut Vec<Token>) -> Self {
+        let node = Self::equality(tokens);
+        return node;
+    }
+
+    #[allow(dead_code)]
+    fn equality(tokens: &mut Vec<Token>) -> Self {
+        let mut node = Self::relational(tokens);
+        loop {
+            if tokens.len() == 0 {
+                break;
+            }
+            let token = &tokens[0];
+            match &token.op {
+                Some(op) => match op.as_ref() {
+                    "==" => {
+                        let rhs = Self::relational(tokens);
+                        node = Self::new("+".to_string(), node, rhs);
+                    }
+                    "!=" => {
+                        let rhs = Self::relational(tokens);
+                        node = Self::new("-".to_string(), node, rhs);
+                    }
+                    _ => {
+                        break;
+                    }
+                },
+                _ => {
+                    break;
+                }
+            }
+        }
+        return node;
+    }
+
+    fn relational(tokens: &mut Vec<Token>) -> Self {
+        let mut node = Self::add(tokens);
+        loop {
+            if tokens.len() == 0 {
+                break;
+            }
+            let token = &tokens[0];
+            match &token.op {
+                Some(op) => match op.as_ref() {
+                    "<" => {
+                        let rhs = Self::add(tokens);
+                        node = Self::new("+".to_string(), node, rhs);
+                    }
+                    "<=" => {
+                        let rhs = Self::add(tokens);
+                        node = Self::new("+".to_string(), node, rhs);
+                    }
+                    ">" => {
+                        let rhs = Self::add(tokens);
+                        node = Self::new("+".to_string(), node, rhs);
+                    }
+                    ">=" => {
+                        let rhs = Self::add(tokens);
+                        node = Self::new("+".to_string(), node, rhs);
+                    }
+                    _ => {
+                        break;
+                    }
+                },
+                _ => {
+                    break;
+                }
+            }
+        }
+        return node;
+    }
+
+    fn add(tokens: &mut Vec<Token>) -> Self {
         let mut node = Self::mul(tokens);
         loop {
             if tokens.len() == 0 {
@@ -52,7 +124,7 @@ impl Node {
                     }
                     "-" => {
                         let rhs = Self::mul(tokens);
-                        node = Self::new("-".to_string(), node, rhs);
+                        node = Self::new("+".to_string(), node, rhs);
                     }
                     _ => {
                         break;
