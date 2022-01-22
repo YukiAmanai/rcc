@@ -2,7 +2,7 @@ pub fn strtol(s: &String) -> (Option<i64>, String) {
     if s.is_empty() {
         return (None, s.clone());
     }
-
+    
     let mut pos = 0;
     let mut remaining = s.clone();
     let len = s.len();
