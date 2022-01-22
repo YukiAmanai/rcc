@@ -41,8 +41,7 @@ impl Node {
         let node = Self::equality(tokens);
         return node;
     }
-
-    #[allow(dead_code)]
+    
     fn equality(tokens: &mut Vec<Token>) -> Self {
         let mut node = Self::relational(tokens);
         loop {
