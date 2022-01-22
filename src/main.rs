@@ -41,13 +41,10 @@ impl Node {
         let node = Self::equality(tokens);
         return node;
     }
-    
+
     fn equality(tokens: &mut Vec<Token>) -> Self {
         let mut node = Self::relational(tokens);
-        loop {
-            if tokens.len() == 0 {
-                break;
-            }
+        while tokens.len() != 0 {
             let token = &tokens[0];
             match &token.op {
                 Some(op) => match op.as_ref() {
@@ -73,10 +70,7 @@ impl Node {
 
     fn relational(tokens: &mut Vec<Token>) -> Self {
         let mut node = Self::add(tokens);
-        loop {
-            if tokens.len() == 0 {
-                break;
-            }
+        while tokens.len() != 0 {
             let token = &tokens[0];
             match &token.op {
                 Some(op) => match op.as_ref() {
@@ -110,10 +104,7 @@ impl Node {
 
     fn add(tokens: &mut Vec<Token>) -> Self {
         let mut node = Self::mul(tokens);
-        loop {
-            if tokens.len() == 0 {
-                break;
-            }
+        while tokens.len() != 0 {
             let token = &tokens[0];
             match &token.op {
                 Some(op) => match op.as_ref() {
@@ -139,10 +130,7 @@ impl Node {
 
     fn mul(tokens: &mut Vec<Token>) -> Self {
         let mut node = Self::unary(tokens);
-        loop {
-            if tokens.len() == 0 {
-                break;
-            }
+        while tokens.len() != 0 {
             let token = &tokens[0];
             match &token.op {
                 Some(op) => match op.as_ref() {
@@ -178,11 +166,7 @@ impl Node {
                 }
                 "-" => {
                     tokens.remove(0);
-                    return Self::new(
-                        "-".to_string(),
-                        Self::new_code_num(0),
-                        Self::primary(tokens),
-                    );
+                    return Self::new("-".to_string(),Self::new_code_num(0),Self::primary(tokens),);
                 }
                 _ => {
                     return Self::primary(tokens);
@@ -281,7 +265,6 @@ impl Token {
     }
 }
 
-#[allow(dead_code)]
 fn gen(node: &Node) {
     if let Some(val) = node.val {
         print!("  push {}", val);
@@ -336,7 +319,7 @@ fn main() {
     print!(".global main\n");
     print!("main:\n");
     gen(&expr);
-    // eprint!("{:#?}", expr);
+    // println!("{:#?}", expr);
 
     print!("  pop rax\n");
     print!("  ret\n");
