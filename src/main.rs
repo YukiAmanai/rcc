@@ -9,7 +9,7 @@ fn main() {
     if args.len() != 2 {
         eprint!("引数の個数が正しくありません");
         return;
-    }                                                   
+    }                                         
 
     // トークナイズしてパースする
     let user_input = args.nth(1);

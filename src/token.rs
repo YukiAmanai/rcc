@@ -12,12 +12,22 @@ impl Token {
     // トークナイザー実装する
     pub fn tokenize(mut p: String) -> Vec<Token> {
         let mut tokens: Vec<Token> = vec![];
-        let current_token = String::from("");
+        let mut current_token = String::from("");
 
         while let Some(c) = p.chars().nth(0) {
             // 空白を読み飛ばす
             if c.is_whitespace() {
                 p = p.split_off(1);
+                continue;
+            }
+
+            if (current_token == ">" || current_token == "<") && c != '=' {
+                let token = Token {
+                    op: Some(c.to_string()),
+                    len: Some(current_token.clone()),
+                    ..Default::default()
+                };
+                tokens.push(token);
                 continue;
             }
 
@@ -29,6 +39,11 @@ impl Token {
                 };
                 tokens.push(token);
                 continue;
+            }
+
+            if c == '=' || c == '!' || c == '<' || c == '>' {
+                current_token = c.to_string();
+                continue; 
             }
 
             // + or -　or * or / or ( or )

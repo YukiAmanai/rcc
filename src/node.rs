@@ -66,19 +66,19 @@ impl Node {
                 Some(op) => match op.as_ref() {
                     "<" => {
                         let rhs = Self::add(tokens);
-                        node = Self::new("+".to_string(), node, rhs);
+                        node = Self::new("<".to_string(), node, rhs);
                     }
                     "<=" => {
                         let rhs = Self::add(tokens);
-                        node = Self::new("+".to_string(), node, rhs);
+                        node = Self::new("<=".to_string(), node, rhs);
                     }
                     ">" => {
                         let rhs = Self::add(tokens);
-                        node = Self::new("+".to_string(), node, rhs);
+                        node = Self::new(">".to_string(), node, rhs);
                     }
                     ">=" => {
                         let rhs = Self::add(tokens);
-                        node = Self::new("+".to_string(), node, rhs);
+                        node = Self::new(">=".to_string(), node, rhs);
                     }
                     _ => {
                         break;
@@ -225,9 +225,29 @@ pub fn gen(node: &Node) {
                 print!("  cqo\n");
                 print!("  idiv rdi\n");
             }
-            _ => {}
+            "<" => {
+                print!("cmp rax, rdi\n");
+                print!("sete al\n");
+                print!("movzb rax, al\n");
+            }
+            "<=" => {
+                print!("cmp rax, rdi\n");
+                print!("sete al\n");
+                print!("movzb rax, al\n");
+            }
+            ">" => {
+                print!("cmp rax, rdi\n");
+                print!("sete al\n");
+                print!("movzb rax, al\n");
+            }
+            ">=" => {
+                print!("cmp rax, rdi\n");
+                print!("sete al\n");
+                print!("movzb rax, al\n");
+            }
+            _ => ()
         },
-        _ => {}
+        _ => ()
     }
     print!("  push rax\n");
 }
