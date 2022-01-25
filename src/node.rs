@@ -225,12 +225,17 @@ pub fn gen(node: &Node) {
                 print!("  cqo\n");
                 print!("  idiv rdi\n");
             }
-            "<" => {
+            "==" => {
                 print!("cmp rax, rdi\n");
                 print!("sete al\n");
                 print!("movzb rax, al\n");
             }
-            "<=" => {
+            "!=" => {
+                print!("cmp rax, rdi\n");
+                print!("sete al\n");
+                print!("movzb rax, al\n");
+            }
+            "<" => {
                 print!("cmp rax, rdi\n");
                 print!("sete al\n");
                 print!("movzb rax, al\n");
@@ -240,7 +245,7 @@ pub fn gen(node: &Node) {
                 print!("sete al\n");
                 print!("movzb rax, al\n");
             }
-            ">=" => {
+            "<=" => {
                 print!("cmp rax, rdi\n");
                 print!("sete al\n");
                 print!("movzb rax, al\n");
