@@ -42,7 +42,13 @@ impl Token {
             }
 
             if c == '=' || c == '!' || c == '<' || c == '>' {
-                current_token = c.to_string();
+                let token = Token {
+                    op: Some(c.to_string()),
+                    len: Some(current_token.clone()),
+                    ..Default::default()
+                };
+                p = p.split_off(1);
+                tokens.push(token);
                 continue;
             }
 
@@ -50,6 +56,7 @@ impl Token {
             if c == '+' || c == '-' || c == '*' || c == '/' || c == '(' || c == ')' {
                 let token = Token {
                     op: Some(c.to_string()),
+                    len: Some(current_token.clone()),
                     ..Default::default()
                 };
                 p = p.split_off(1);
@@ -73,9 +80,9 @@ impl Token {
             exit(1);
         }
 
-        tokens.push(Token {
-            ..Default::default()
-        });
+        // tokens.push(Token {
+        //     ..Default::default()
+        // });
 
         return tokens;
     }

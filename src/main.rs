@@ -39,11 +39,6 @@ pub fn gen(node: &Node) {
                 print!("  sete al\n");
                 print!("  movzb rax, al\n");
             }
-            "!=" => {
-                print!("  cmp rax, rdi\n");
-                print!("  setne al\n");
-                print!("  movzb rax, al\n");
-            }
             "<" => {
                 print!("  cmp rax, rdi\n");
                 print!("  setl al\n");
@@ -52,6 +47,11 @@ pub fn gen(node: &Node) {
             "<=" => {
                 print!("  cmp rax, rdi\n");
                 print!("  setle al\n");
+                print!("  movzb rax, al\n");
+            }
+            "!=" => {
+                print!("  cmp rax, rdi\n");
+                print!("  setne al\n");
                 print!("  movzb rax, al\n");
             }
             _ => {}
