@@ -6,7 +6,7 @@ try() {
     input="$2"
 
     cargo run -- "$input" > tmp.s
-    cc -o tmp tmp.s
+    gcc -static -o tmp tmp.s
     ./tmp
     actual="$?"
 
@@ -27,11 +27,9 @@ try 15 '5*(9-6)'
 try 4 '(3+5)/2'
 try 10 '-10+20'
 try 10 '12+(-7)'
-try 1 '5==5'
-try 1 '5<=5'
-try 1 '4 < 5'
-try 0 '7 < 5'
-try 1 '7 > 5'
-try 0 '4 > 5'
-try 0 '12+(-7) != 20+(-3*5)'
+try 1 '13==13'
+try 1 '12<=12'
+try 1 '12 < 13'
+try 0 '13< 23'
+try 0 '12+(-3) != 13+(-1*3)'
 echo OK

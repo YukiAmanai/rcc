@@ -63,7 +63,6 @@ impl Token {
                 p = remaining;
                 let token = Token {
                     val: n,
-                    op: None,
                     ..Default::default()
                 };
                 tokens.push(token);
