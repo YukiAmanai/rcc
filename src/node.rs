@@ -2,10 +2,10 @@ use crate::token::Token;
 
 #[derive(Default, Clone, Debug)]
 pub struct Node {
-    lhs: Option<Box<Node>>, //左辺
-    rhs: Option<Box<Node>>, //右辺
-    val: Option<i64>,
-    operator: Option<String>,
+    pub lhs: Option<Box<Node>>, //左辺
+    pub rhs: Option<Box<Node>>, //右辺
+    pub val: Option<i64>,
+    pub operator: Option<String>,
 }
 
 impl Node {
@@ -39,12 +39,14 @@ impl Node {
             match &token.op {
                 Some(op) => match op.as_ref() {
                     "==" => {
+                        tokens.remove(0);
                         let rhs = Self::relational(tokens);
-                        node = Self::new("+".to_string(), node, rhs);
+                        node = Self::new("==".to_string(), node, rhs);
                     }
                     "!=" => {
+                        tokens.remove(0);
                         let rhs = Self::relational(tokens);
-                        node = Self::new("-".to_string(), node, rhs);
+                        node = Self::new("!=".to_string(), node, rhs);
                     }
                     _ => {
                         break;
@@ -65,20 +67,24 @@ impl Node {
             match &token.op {
                 Some(op) => match op.as_ref() {
                     "<" => {
+                        tokens.remove(0);
                         let rhs = Self::add(tokens);
                         node = Self::new("<".to_string(), node, rhs);
                     }
                     "<=" => {
+                        tokens.remove(0);
                         let rhs = Self::add(tokens);
                         node = Self::new("<=".to_string(), node, rhs);
                     }
                     ">" => {
+                        tokens.remove(0);
                         let rhs = Self::add(tokens);
-                        node = Self::new(">".to_string(), node, rhs);
+                        node = Self::new("<".to_string(), rhs, node);
                     }
                     ">=" => {
+                        tokens.remove(0);
                         let rhs = Self::add(tokens);
-                        node = Self::new(">=".to_string(), node, rhs);
+                        node = Self::new("<=".to_string(), rhs, node);
                     }
                     _ => {
                         break;
@@ -193,66 +199,4 @@ impl Node {
             }
         }
     }
-}
-
-pub fn gen(node: &Node) {
-    if let Some(val) = node.val {
-        print!("  push {}", val);
-    }
-
-    if let Some(rhs) = &node.rhs {
-        gen(&rhs);
-    }
-
-    if let Some(lhs) = &node.lhs {
-        gen(&lhs);
-    }
-    print!("  pop rdi\n");
-    print!("  pop rax\n");
-
-    match &node.operator {
-        Some(op) => match op.as_ref() {
-            "+" => {
-                print!("  add rax, rdi\n");
-            }
-            "-" => {
-                print!("  sub rax, rdi\n");
-            }
-            "*" => {
-                print!("  imul rax, rdi\n");
-            }
-            "/" => {
-                print!("  cqo\n");
-                print!("  idiv rdi\n");
-            }
-            "==" => {
-                print!("cmp rax, rdi\n");
-                print!("sete al\n");
-                print!("movzb rax, al\n");
-            }
-            "!=" => {
-                print!("cmp rax, rdi\n");
-                print!("sete al\n");
-                print!("movzb rax, al\n");
-            }
-            "<" => {
-                print!("cmp rax, rdi\n");
-                print!("sete al\n");
-                print!("movzb rax, al\n");
-            }
-            ">" => {
-                print!("cmp rax, rdi\n");
-                print!("sete al\n");
-                print!("movzb rax, al\n");
-            }
-            "<=" => {
-                print!("cmp rax, rdi\n");
-                print!("sete al\n");
-                print!("movzb rax, al\n");
-            }
-            _ => ()
-        },
-        _ => ()
-    }
-    print!("  push rax\n");
 }

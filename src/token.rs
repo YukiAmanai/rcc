@@ -27,8 +27,8 @@ impl Token {
                     len: Some(current_token.clone()),
                     ..Default::default()
                 };
+                current_token = String::from("");
                 tokens.push(token);
-                continue;
             }
 
             if c == '=' && current_token.len() > 0 {
@@ -43,7 +43,7 @@ impl Token {
 
             if c == '=' || c == '!' || c == '<' || c == '>' {
                 current_token = c.to_string();
-                continue; 
+                continue;
             }
 
             // + or -　or * or / or ( or )
