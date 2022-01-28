@@ -9,6 +9,20 @@ pub struct Token {
 }
 
 impl Token {
+    fn operator(op: String, len: String) -> Self {
+        Self {
+            op: Some(op),
+            len: Some(len),
+            ..Default::default()
+        }
+    }
+    fn number(val: i64) -> Self {
+        Self {
+            val: Some(val),
+            ..Default::default()
+        }
+    }
+
     // トークナイザー実装する
     pub fn tokenize(mut p: String) -> Vec<Token> {
         let mut tokens: Vec<Token> = vec![];
@@ -52,6 +66,16 @@ impl Token {
                 continue;
             }
 
+            if p == "!=" || p == "==" || p == "=<" || p == "<=" {
+                let token = Token {
+                    op: Some(c.to_string()),
+                    len: Some(current_token.clone()),
+                    ..Default::default()
+                };
+                tokens.push(token);
+                continue;
+            }
+
             // + or -　or * or / or ( or )
             if c == '+' || c == '-' || c == '*' || c == '/' || c == '(' || c == ')' {
                 let token = Token {
@@ -75,15 +99,12 @@ impl Token {
                 tokens.push(token);
                 continue;
             }
-
             eprint!("トークナイズできません: {}", c);
             exit(1);
         }
-
-        // tokens.push(Token {
-        //     ..Default::default()
-        // });
-
+        tokens.push(Token {
+            ..Default::default()
+        });
         return tokens;
     }
 }
