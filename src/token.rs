@@ -1,18 +1,13 @@
-use rcc::strtol;
-use std::process::exit;
-
 #[derive(Default, Debug, Clone)]
 pub struct Token {
     pub val: Option<i64>,    // Number
     pub op: Option<String>,  // character
-    pub len: Option<String>, // length
 }
 
 impl Token {
-    fn operator(op: String, len: String) -> Self {
+    fn operator(op: String) -> Self {
         Self {
             op: Some(op),
-            len: Some(len),
             ..Default::default()
         }
     }
@@ -24,87 +19,76 @@ impl Token {
     }
 
     // トークナイザー実装する
-    pub fn tokenize(mut p: String) -> Vec<Token> {
+    pub fn tokenize(input: String) -> Vec<Token> {
         let mut tokens: Vec<Token> = vec![];
-        let mut current_token = String::from("");
+        let mut input = input;
 
-        while let Some(c) = p.chars().nth(0) {
-            // 空白を読み飛ばす
-            if c.is_whitespace() {
-                p = p.split_off(1);
-                continue;
+        loop {
+            if input.is_empty() {
+                break;
             }
+            consume_whitespace(&mut input);
 
-            if (current_token == ">" || current_token == "<") && c != '=' {
-                let token = Token {
-                    op: Some(c.to_string()),
-                    len: Some(current_token.clone()),
-                    ..Default::default()
-                };
-                current_token = String::from("");
-                tokens.push(token);
-            }
-
-            if c == '=' && current_token.len() > 0 {
-                let token = Token {
-                    op: Some(c.to_string()),
-                    len: Some(current_token.clone()),
-                    ..Default::default()
-                };
+            if let Some(token) = consume_number(&mut input) {
                 tokens.push(token);
                 continue;
             }
-
-            if c == '=' || c == '!' || c == '<' || c == '>' {
-                let token = Token {
-                    op: Some(c.to_string()),
-                    len: Some(current_token.clone()),
-                    ..Default::default()
-                };
-                p = p.split_off(1);
+            if let Some(token) = consume_operator(&mut input) {
                 tokens.push(token);
                 continue;
             }
-
-            if p == "!=" || p == "==" || p == "=<" || p == "<=" {
-                let token = Token {
-                    op: Some(c.to_string()),
-                    len: Some(current_token.clone()),
-                    ..Default::default()
-                };
-                tokens.push(token);
-                continue;
-            }
-
-            // + or -　or * or / or ( or )
-            if c == '+' || c == '-' || c == '*' || c == '/' || c == '(' || c == ')' {
-                let token = Token {
-                    op: Some(c.to_string()),
-                    len: Some(current_token.clone()),
-                    ..Default::default()
-                };
-                p = p.split_off(1);
-                tokens.push(token);
-                continue;
-            }
-
-            // Number
-            if c.is_ascii_digit() {
-                let (n, remaining) = strtol(&p);
-                p = remaining;
-                let token = Token {
-                    val: n,
-                    ..Default::default()
-                };
-                tokens.push(token);
-                continue;
-            }
-            eprint!("トークナイズできません: {}", c);
-            exit(1);
         }
-        tokens.push(Token {
-            ..Default::default()
-        });
-        return tokens;
+            return tokens;
+    }
+}
+
+fn consume_whitespace(input: &mut String) {
+    loop {
+        match input.chars().next() {
+            Some(c) if c.is_whitespace() => {
+                input.remove(0);
+            }
+            _ => {
+                break;
+            }
+        }
+    }
+}
+
+fn consume_number(input: &mut String) ->Option<Token> {
+    let mut digits = "".to_string();
+    loop {
+        match input.chars().next() {
+            Some(c) if c.is_ascii_digit() => {
+                digits += &c.to_string();
+                input.remove(0);
+            }
+            _ => {
+                break;
+            }
+        }
+    }
+    if digits.is_empty() {
+        None
+    } else {
+        Some(Token::number(digits.parse::<i64>().unwrap()))
+    }
+}
+
+fn consume_operator(input: &mut String) -> Option<Token> {
+    if input.starts_with("==") ||
+        input.starts_with("!=") ||
+        input.starts_with("<=") ||
+        input.starts_with(">=") {
+            let token = Some(Token::operator(input[..2].to_string()));
+            input.drain(0..2);
+            return token;
+        }
+    match input.chars().next() {
+        Some(c) if c == '+' || c == '-' || c == '*' || c == '/' || c == '(' || c == ')' || c == '>' || c == '<' => {
+            input.remove(0);
+            Some(Token::operator(c.to_string()))
+        }
+        _ => None,
     }
 }
