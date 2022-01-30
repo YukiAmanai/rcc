@@ -45,7 +45,7 @@ impl Token {
 // 最初の空白除去
 fn consume_whitespace(input: &mut String) {
     loop {
-        match input.chars().next() {
+        match input.chars().nth(0) {
             Some(c) if c.is_whitespace() => {
                 input.remove(0);
             }
@@ -60,7 +60,7 @@ fn consume_whitespace(input: &mut String) {
 fn consume_number(input: &mut String) ->Option<Token> {
     let mut digits = "".to_string();
     loop {
-        match input.chars().next() {
+        match input.chars().nth(0) {
             Some(c) if c.is_ascii_digit() => {
                 digits += &c.to_string();
                 input.remove(0);
@@ -87,7 +87,7 @@ fn consume_operator(input: &mut String) -> Option<Token> {
             input.drain(0..2);
             return token;
         }
-    match input.chars().next() {
+    match input.chars().nth(0) {
         Some(c) if c == '+' || c == '-' || c == '*' || c == '/' || c == '(' || c == ')' || c == '>' || c == '<' => {
             input.remove(0);
             Some(Token::operator(c.to_string()))
