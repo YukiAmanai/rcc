@@ -70,7 +70,7 @@ fn main() {
 
     // トークナイズしてパースする
     let user_input = args.nth(1);
-    let mut tokens = Token::tokenize(user_input.unwrap());
+    let mut tokens = Token::perser(user_input.unwrap());
     let expr = Node::expr(&mut tokens);
 
     // アセンブリの前半部分を出力

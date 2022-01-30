@@ -18,8 +18,8 @@ impl Token {
         }
     }
 
-    // トークナイザー実装する
-    pub fn tokenize(input: String) -> Vec<Token> {
+    // パーサー実装
+    pub fn perser(input: String) -> Vec<Token> {
         let mut tokens: Vec<Token> = vec![];
         let mut input = input;
 
@@ -42,6 +42,7 @@ impl Token {
     }
 }
 
+// 最初の空白除去
 fn consume_whitespace(input: &mut String) {
     loop {
         match input.chars().next() {
@@ -55,6 +56,7 @@ fn consume_whitespace(input: &mut String) {
     }
 }
 
+// 数字のconsume関数実装
 fn consume_number(input: &mut String) ->Option<Token> {
     let mut digits = "".to_string();
     loop {
@@ -75,6 +77,7 @@ fn consume_number(input: &mut String) ->Option<Token> {
     }
 }
 
+// オペランドのconsume関数実装
 fn consume_operator(input: &mut String) -> Option<Token> {
     if input.starts_with("==") ||
         input.starts_with("!=") ||
