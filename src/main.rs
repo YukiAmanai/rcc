@@ -63,15 +63,15 @@ pub fn gen(node: &Node) {
 }
 
 fn main() {
-    let mut args = env::args();
-    if args.len() != 2 {
+    let args: Vec<String> = env::args().collect();
+    if args.len() < 2 {
         eprint!("引数の個数が正しくありません");
         return;
     }                                         
 
     // トークナイズしてパースする
-    let user_input = args.nth(1).unwrap();
-    let mut tokens = Token::perser(user_input);
+    let user_input = &args[1];
+    let mut tokens = Token::perser(user_input.to_string());
     let expr = Node::expr(&mut tokens);
 
     print!(".intel_syntax noprefix\n");
