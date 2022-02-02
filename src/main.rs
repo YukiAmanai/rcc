@@ -4,6 +4,7 @@ mod node;
 use token::Token;
 use node::Node;
 
+// コード生成の関数
 pub fn gen(node: &Node) {
     if let Some(val) = node.val {
         print!("  push {}", val);
@@ -69,11 +70,10 @@ fn main() {
     }                                         
 
     // トークナイズしてパースする
-    let user_input = args.nth(1);
-    let mut tokens = Token::perser(user_input.unwrap());
+    let user_input = args.nth(1).unwrap();
+    let mut tokens = Token::perser(user_input);
     let expr = Node::expr(&mut tokens);
 
-    // アセンブリの前半部分を出力
     print!(".intel_syntax noprefix\n");
     print!(".global main\n");
     print!("main:\n");
