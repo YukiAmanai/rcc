@@ -1,3 +1,5 @@
+use std::process::exit;
+
 #[derive(Default, Debug, Clone)]
 pub struct Token {
     pub val: Option<i64>,    // Number
@@ -32,11 +34,16 @@ impl Token {
             if let Some(token) = consume_number(&mut input) {
                 tokens.push(token);
                 continue;
+            } else {
+                eprint!("数ではありません: {}\n", input);
             }
             if let Some(token) = consume_operator(&mut input) {
                 tokens.push(token);
                 continue;
             }
+            
+            eprint!("トークナイズできません: {}\n", input);
+            exit(1);
         }
             return tokens;
     }
