@@ -1,15 +1,15 @@
 use std::env;
-mod token;
 mod node;
-use token::Token;
+mod token;
 use node::Node;
+use token::Token;
 
 // コード生成の関数
 pub fn gen(node: &Node) {
     if let Some(val) = node.val {
         print!("  push {}", val);
     }
-
+    
     if let Some(rhs) = &node.rhs {
         gen(&rhs);
     }
@@ -17,6 +17,7 @@ pub fn gen(node: &Node) {
     if let Some(lhs) = &node.lhs {
         gen(&lhs);
     }
+
     print!("  pop rdi\n");
     print!("  pop rax\n");
 
@@ -64,10 +65,10 @@ pub fn gen(node: &Node) {
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    if args.len() < 2 {
+    if args.len() != 2 {
         eprint!("引数の個数が正しくありません");
         return;
-    }                                         
+    }
 
     // トークナイズしてパースする
     let user_input = &args[1];

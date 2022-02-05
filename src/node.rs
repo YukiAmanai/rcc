@@ -162,7 +162,11 @@ impl Node {
                 }
                 "-" => {
                     tokens.remove(0);
-                    return Self::new("-".to_string(),Self::new_code_num(0),Self::primary(tokens));
+                    return Self::new(
+                        "-".to_string(),
+                        Self::new_code_num(0),
+                        Self::primary(tokens),
+                    );
                 }
                 _ => {
                     return Self::primary(tokens);

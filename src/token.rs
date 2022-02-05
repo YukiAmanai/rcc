@@ -1,10 +1,9 @@
 use std::process::exit;
 
-
 #[derive(Default, Debug, Clone)]
 pub struct Token {
-    pub val: Option<i64>,    // Number
-    pub op: Option<String>,  // character
+    pub val: Option<i64>,   // 数字
+    pub op: Option<String>, // 文字
 }
 
 impl Token {
@@ -14,6 +13,7 @@ impl Token {
             ..Default::default()
         }
     }
+
     fn number(val: i64) -> Self {
         Self {
             val: Some(val),
@@ -30,7 +30,7 @@ impl Token {
             if input.is_empty() {
                 break;
             }
-            
+
             consume_whitespace(&mut input);
 
             if let Some(token) = consume_number(&mut input) {
@@ -45,7 +45,7 @@ impl Token {
             eprint!("トークナイズできません: {}\n", input);
             exit(1);
         }
-            return tokens;
+        return tokens;
     }
 }
 
@@ -64,7 +64,7 @@ fn consume_whitespace(input: &mut String) {
 }
 
 // 数字のconsume関数実装
-fn consume_number(input: &mut String) ->Option<Token> {
+fn consume_number(input: &mut String) -> Option<Token> {
     let mut digits = "".to_string();
     loop {
         match input.chars().nth(0) {
@@ -86,19 +86,33 @@ fn consume_number(input: &mut String) ->Option<Token> {
 
 // オペランドのconsume関数実装
 fn consume_operator(input: &mut String) -> Option<Token> {
-    if input.starts_with("==") ||
-        input.starts_with("!=") ||
-        input.starts_with("<=") ||
-        input.starts_with(">=") {
-            let token = Some(Token::operator(input[..2].to_string()));
-            input.drain(0..2);
-            return token;
-        }
+    if input.starts_with("==")
+        || input.starts_with("!=")
+        || input.starts_with("<=")
+        || input.starts_with(">=")
+    {
+        let token = Some(Token::operator(input[..2].to_string()));
+        input.drain(0..2);
+        return token;
+    }
     match input.chars().nth(0) {
-        Some(c) if c == '+' || c == '-' || c == '*' || c == '/' || c == '(' || c == ')' || c == '>' || c == '<' => {
+        Some(c)
+            if c == '+'
+                || c == '-'
+                || c == '*'
+                || c == '/'
+                || c == '('
+                || c == ')'
+                || c == '>'
+                || c == '<' =>
+        {
             input.remove(0);
             Some(Token::operator(c.to_string()))
         }
         _ => None,
     }
 }
+
+// fn consume_ident(input: String) -> Option<Token> {
+    
+// }
