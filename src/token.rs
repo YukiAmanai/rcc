@@ -4,6 +4,7 @@ use std::process::exit;
 pub struct Token {
     pub val: Option<i64>,   // 数字
     pub op: Option<String>, // 文字
+    pub ident: Option<String> //識別子
 }
 
 impl Token {
@@ -17,6 +18,12 @@ impl Token {
     fn number(val: i64) -> Self {
         Self {
             val: Some(val),
+            ..Default::default()
+        }
+    }
+    fn ident(ident: String) -> Self {
+        Self {
+            ident: Some(ident),
             ..Default::default()
         }
     }
@@ -37,7 +44,13 @@ impl Token {
                 tokens.push(token);
                 continue;
             }
+
             if let Some(token) = consume_operator(&mut input) {
+                tokens.push(token);
+                continue;
+            }
+
+            if let Some(token) = consume_ident(&mut input) {
                 tokens.push(token);
                 continue;
             }
@@ -104,7 +117,8 @@ fn consume_operator(input: &mut String) -> Option<Token> {
                 || c == '('
                 || c == ')'
                 || c == '>'
-                || c == '<' =>
+                || c == '<' 
+                || c == ';' =>
         {
             input.remove(0);
             Some(Token::operator(c.to_string()))
@@ -113,6 +127,12 @@ fn consume_operator(input: &mut String) -> Option<Token> {
     }
 }
 
-// fn consume_ident(input: String) -> Option<Token> {
-    
-// }
+fn consume_ident(input: &mut String) -> Option<Token> {
+        match input.chars().nth(0) {
+            Some(c) if c.is_ascii_alphabetic() => {
+                input.remove(0);
+                Some(Token::ident(c.to_string()))
+            }
+            _ => None
+        }
+}

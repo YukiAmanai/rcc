@@ -27,8 +27,18 @@ impl Node {
         }
     }
 
+    pub fn program(tokens: &mut Vec<Token>) -> Self{
+        let node = Self::stmt(tokens);
+        return node;
+    }
+
     pub fn expr(tokens: &mut Vec<Token>) -> Self {
-        let node = Self::equality(tokens);
+        let node = Self::assign(tokens);
+        return node;
+    }
+
+    pub fn stmt(tokens: &mut Vec<Token>) -> Self{
+        let node = Self::expr(tokens);
         return node;
     }
 
@@ -57,6 +67,11 @@ impl Node {
                 }
             }
         }
+        return node;
+    }
+
+    pub fn assign(tokens: &mut Vec<Token>) -> Self {
+        let node = Self::equality(tokens);
         return node;
     }
 
