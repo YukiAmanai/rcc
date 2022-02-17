@@ -37,7 +37,7 @@ impl Node {
         return node;
     }
 
-    pub fn stmt(tokens: &mut Vec<Token>) -> Self{
+    pub fn stmt(tokens: &mut Vec<Token>) -> Self {
         let node = Self::expr(tokens);
         return node;
     }
