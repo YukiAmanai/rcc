@@ -217,5 +217,4 @@ impl Node {
                 return Node::new_code_num(num);
             }
         }
-    }
-}
+    }}
