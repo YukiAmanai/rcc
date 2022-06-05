@@ -5,9 +5,14 @@ script = ["docker build -t compilerbook https://www.sigbus.info/compilerbook/Doc
 script = ["docker run --rm -it -v $(pwd):/ws compilerbook"]
 
 [tasks.build]
+rustflags = [
+"-C", "link-arg=-Wl,-z=lazy",
+"-C", "relocation-model=dynamic-no-pic"
+]
 install_crate = "cross"
 command = "cross"
 args = ["build", "--target", "x86_64-unknown-linux-musl"]
+
 
 [tasks.test]
 command = "cargo"
