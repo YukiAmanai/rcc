@@ -1,16 +1,20 @@
 #!/bin/bash
 
-rcc="./target/debug/rcc"
+CMD=./target/x86_64-unknown-linux-musl/debug/rcc
+TARGET=./target/tmp
+
+mkdir -p "${TARGET}"
+
 try() {
-    expected="$1"
-    input="$2"
+  expected="$1"
+  input="$2"
 
-    cargo run -- "$input" > tmp.s
-    gcc -static -o tmp tmp.s
-    ./tmp
-    actual="$?"
+  ${CMD} "$input" > "${TARGET}/tmp.s"
+  gcc -o "${TARGET}/tmp" "${TARGET}/tmp.s"
+  "${TARGET}/tmp"
+  actual="$?"
 
-if [ "$actual" = "$expected" ]; then
+  if [ "$actual" = "$expected" ]; then
     echo "$input => $actual"
   else
     echo "$input => $expected expected, but got $actual"

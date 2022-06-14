@@ -27,7 +27,7 @@ impl Node {
         }
     }
 
-    pub fn program(tokens: &mut Vec<Token>) -> Self{
+    pub fn program(tokens: &mut Vec<Token>) -> Self {
         let node = Self::stmt(tokens);
         return node;
     }
@@ -217,4 +217,5 @@ impl Node {
                 return Node::new_code_num(num);
             }
         }
-    }}
+    }
+}

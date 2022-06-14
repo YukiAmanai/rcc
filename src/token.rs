@@ -2,9 +2,9 @@ use std::process::exit;
 
 #[derive(Default, Debug, Clone)]
 pub struct Token {
-    pub val: Option<i64>,   // 数字
-    pub op: Option<String>, // 文字
-    pub ident: Option<String> //識別子
+    pub val: Option<i64>,      // 数字
+    pub op: Option<String>,    // 文字
+    pub ident: Option<String>, //識別子
 }
 
 impl Token {
@@ -117,7 +117,7 @@ fn consume_operator(input: &mut String) -> Option<Token> {
                 || c == '('
                 || c == ')'
                 || c == '>'
-                || c == '<' 
+                || c == '<'
                 || c == ';' =>
         {
             input.remove(0);
@@ -128,11 +128,11 @@ fn consume_operator(input: &mut String) -> Option<Token> {
 }
 
 fn consume_ident(input: &mut String) -> Option<Token> {
-        match input.chars().nth(0) {
-            Some(c) if c.is_ascii_alphabetic() => {
-                input.remove(0);
-                Some(Token::ident(c.to_string()))
-            }
-            _ => None
+    match input.chars().nth(0) {
+        Some(c) if c.is_ascii_alphabetic() => {
+            input.remove(0);
+            Some(Token::ident(c.to_string()))
         }
+        _ => None,
+    }
 }

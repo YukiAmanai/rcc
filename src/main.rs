@@ -9,7 +9,7 @@ pub fn gen(node: &Node) {
     if let Some(val) = node.val {
         print!("  push {}", val);
     }
-    
+
     if let Some(rhs) = &node.rhs {
         gen(&rhs);
     }
