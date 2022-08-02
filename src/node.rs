@@ -6,6 +6,7 @@ pub struct Node {
     pub rhs: Option<Box<Node>>, //右辺
     pub val: Option<i64>,
     pub operator: Option<String>,
+    pub ident: Option<String>,
 }
 
 impl Node {
@@ -37,9 +38,32 @@ impl Node {
         return node;
     }
 
+    #[warn(unused_variables)]
     pub fn stmt(tokens: &mut Vec<Token>) -> Self {
-        let node = Self::expr(tokens);
-        return node;
+        let _node = Self::expr(tokens);
+        match &tokens[0].op {
+            Some(op) => match op.as_ref() {
+                ";" => {
+                    let close_index = tokens
+                        .iter()
+                        .position(|token| token.op == Some(";".to_string()))
+                        .unwrap();
+                    let mut exp = tokens[1..close_index].to_vec();
+                    tokens.drain(0..(close_index + 1));
+                    return Node::expr(&mut exp);
+                }
+                _ => {
+                    let num = tokens[0].val.unwrap();
+                    tokens.remove(0);
+                    return Node::new_code_num(num);
+                }
+            },
+            _ => {
+                let num = tokens[0].val.unwrap();
+                tokens.remove(0);
+                return Node::new_code_num(num);
+            }
+        }
     }
 
     pub fn equality(tokens: &mut Vec<Token>) -> Self {
