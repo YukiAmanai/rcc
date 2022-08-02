@@ -118,6 +118,7 @@ fn consume_operator(input: &mut String) -> Option<Token> {
                 || c == ')'
                 || c == '>'
                 || c == '<'
+                || c == '='
                 || c == ';' =>
         {
             input.remove(0);
@@ -129,7 +130,7 @@ fn consume_operator(input: &mut String) -> Option<Token> {
 
 fn consume_ident(input: &mut String) -> Option<Token> {
     match input.chars().nth(0) {
-        Some(c) if c.is_ascii_alphabetic() => {
+        Some(c) if 'a' <= c && c <= 'z' => {
             input.remove(0);
             Some(Token::ident(c.to_string()))
         }
